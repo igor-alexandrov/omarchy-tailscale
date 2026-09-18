@@ -48,8 +48,11 @@ directory. To keep the plugin installed but hide it, disable it instead:
 omarchy plugin disable igor-alexandrov.tailscale
 ```
 
-The plugin writes nothing outside its own directory and leaves no settings
-behind.
+Widget settings are not stored in the plugin directory: the refresh interval and
+your recently used Mullvad exit nodes live in the bar layout in
+`~/.config/omarchy/shell.json`, the same place Omarchy keeps the settings of its
+own widgets. Removing the plugin takes its entry out of the bar; edit that file
+if you want to be sure nothing is left. The plugin writes nothing anywhere else.
 
 > Plugins run as unsandboxed code inside the long-lived `omarchy-shell`
 > process. Read the source before enabling this, or any other plugin.
