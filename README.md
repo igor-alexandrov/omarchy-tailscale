@@ -35,6 +35,22 @@ omarchy bar move igor-alexandrov.tailscale --section right
 
 Update later with `omarchy plugin update igor-alexandrov.tailscale`.
 
+## Uninstall
+
+```bash
+omarchy plugin remove igor-alexandrov.tailscale
+```
+
+That disables the widget, takes it out of the bar, and deletes the plugin
+directory. To keep the plugin installed but hide it, disable it instead:
+
+```bash
+omarchy plugin disable igor-alexandrov.tailscale
+```
+
+The plugin writes nothing outside its own directory and leaves no settings
+behind.
+
 > Plugins run as unsandboxed code inside the long-lived `omarchy-shell`
 > process. Read the source before enabling this, or any other plugin.
 
