@@ -1,5 +1,9 @@
 # omarchy-tailscale
 
+[![CI](https://github.com/igor-alexandrov/omarchy-tailscale/actions/workflows/ci.yml/badge.svg)](https://github.com/igor-alexandrov/omarchy-tailscale/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Omarchy](https://img.shields.io/badge/Omarchy-4.x-8b5cf6.svg)](https://omarchy.org/)
+
 A Tailscale widget for the [Omarchy](https://omarchy.org/) bar — the Linux
 equivalent of the Tailscale menu bar icon on macOS.
 
