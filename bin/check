@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+#
+# Run every check for this plugin. Steps that need tools this machine may not
+# have (Omarchy, Qt 6) are skipped with a note rather than failing, so the same
+# script works on a developer machine and on a stock CI runner.
+#
+#   bin/check
+
+set -uo pipefail
+
+ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+cd "$ROOT"
+
+failed=()
+skipped=()
+
+run() {
+  local name="$1"
+  shift
+  printf '==> %s\n' "$name"
+  if "$@"; then
+    return 0
+  fi
+  failed+=("$name")
+  return 1
+}
+
+# --- node: syntax and unit tests --------------------------------------------
+
+if command -v node >/dev/null 2>&1; then
+  run "node --check Model.js" node --check Model.js
+  run "test/model-test.js" node test/model-test.js
+  run "test/manifest-test.js" node test/manifest-test.js
+else
+  skipped+=("node tests (node not installed)")
+fi
+
+# --- omarchy: the authoritative manifest validation --------------------------
+
+if command -v omarchy >/dev/null 2>&1; then
+  run "omarchy plugin validate" omarchy plugin validate .
+else
+  skipped+=("omarchy plugin validate (omarchy not installed)")
+fi
+
+# --- qmllint -----------------------------------------------------------------
+#
+# Use Qt 6's qmllint explicitly: /usr/bin/qmllint is Qt 5's on Arch and exits
+# 255 with no output on any Quickshell file. The shell tree has to be visible
+# under a directory literally named `qs` for `import qs.Ui` to resolve, hence
+# the symlink farm.
+#
+# Warnings are reported but do not fail: the upstream code this is derived from
+# carries ~157 of them (unqualified access, and missing-property against the
+# Style singleton's nested objects, which qmllint cannot introspect). Errors do
+# fail the run.
+
+QMLLINT=""
+for candidate in /usr/lib/qt6/bin/qmllint "${QT6_QMLLINT:-}"; do
+  [[ -n $candidate && -x $candidate ]] && QMLLINT="$candidate" && break
+done
+
+SHELL_DIR="${OMARCHY_PATH:-/usr/share/omarchy}/shell"
+
+if [[ -n $QMLLINT && -d $SHELL_DIR ]]; then
+  printf '==> qmllint\n'
+  qsroot=$(mktemp -d)
+  trap 'rm -rf "$qsroot"' EXIT
+  ln -sfn "$SHELL_DIR" "$qsroot/qs"
+
+  lint_out=$(mktemp)
+  lint_status=0
+  for qml in *.qml; do
+    "$QMLLINT" -I "$qsroot" -I /usr/lib/qt6/qml "$qml" >>"$lint_out" 2>&1 || lint_status=1
+  done
+
+  errors=$(grep -c '^Error' "$lint_out")
+  warnings=$(grep -c '^Warning' "$lint_out")
+  printf '    %s error(s), %s warning(s)\n' "$errors" "$warnings"
+
+  if (( errors > 0 )) || (( lint_status != 0 )); then
+    grep '^Error' "$lint_out" | head -20
+    failed+=("qmllint")
+  fi
+  rm -f "$lint_out"
+else
+  skipped+=("qmllint (needs Qt 6 qmllint and an Omarchy shell tree)")
+fi
+
+# --- report ------------------------------------------------------------------
+
+echo
+for s in "${skipped[@]:-}"; do
+  [[ -n $s ]] && printf 'skipped: %s\n' "$s"
+done
+
+if (( ${#failed[@]} > 0 )); then
+  printf '\n%d check(s) failed:\n' "${#failed[@]}"
+  printf '  %s\n' "${failed[@]}"
+  exit 1
+fi
+
+printf '\nAll checks passed.\n'

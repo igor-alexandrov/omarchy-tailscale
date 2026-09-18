@@ -1,0 +1,74 @@
+{
+  "_comment": "Synthetic `tailscale status --json` output. Hand-written: no real tailnet data, keys or account addresses belong in this repo.",
+  "BackendState": "Running",
+  "AuthURL": "",
+  "TailscaleIPs": ["100.64.0.1", "fd7a:115c:a1e0::1"],
+  "Self": {
+    "ID": "1",
+    "UserID": 1001,
+    "HostName": "workstation",
+    "DNSName": "workstation.tailnet-demo.ts.net.",
+    "OS": "linux",
+    "TailscaleIPs": ["100.64.0.1", "fd7a:115c:a1e0::1", "192.168.1.50"],
+    "Online": true,
+    "CapMap": {
+      "https://tailscale.com/cap/file-sharing": []
+    }
+  },
+  "Peer": {
+    "peer-aardvark": {
+      "ID": "2",
+      "UserID": 1001,
+      "HostName": "aardvark",
+      "DNSName": "aardvark.tailnet-demo.ts.net.",
+      "OS": "windows",
+      "TailscaleIPs": ["100.64.0.9", "fd7a:115c:a1e0::9"],
+      "Online": false,
+      "ExitNodeOption": true,
+      "TaildropTarget": 1
+    },
+    "peer-beacon": {
+      "ID": "3",
+      "UserID": 1001,
+      "HostName": "beacon",
+      "DNSName": "beacon.tailnet-demo.ts.net.",
+      "OS": "linux",
+      "TailscaleIPs": ["100.64.0.2", "fd7a:115c:a1e0::2"],
+      "Online": true,
+      "ExitNodeOption": true,
+      "TaildropTarget": 1
+    },
+    "peer-laptop": {
+      "ID": "4",
+      "UserID": 1001,
+      "HostName": "laptop",
+      "DNSName": "laptop.tailnet-demo.ts.net.",
+      "OS": "macOS",
+      "TailscaleIPs": ["100.64.0.3", "fd7a:115c:a1e0::3", "10.0.0.7"],
+      "Online": true,
+      "ExitNodeOption": false,
+      "TaildropTarget": 1
+    },
+    "peer-edge": {
+      "ID": "5",
+      "UserID": 2002,
+      "HostName": "localhost",
+      "DNSName": "edge-node.tailnet-demo.ts.net.",
+      "OS": "android",
+      "TailscaleIPs": ["100.64.0.4"],
+      "Online": true,
+      "ExitNodeOption": false,
+      "TaildropTarget": 2
+    },
+    "peer-mullvad": {
+      "ID": "6",
+      "UserID": 3003,
+      "HostName": "se-mma-wg-001",
+      "DNSName": "se-mma-wg-001.mullvad.ts.net.",
+      "OS": "linux",
+      "TailscaleIPs": ["100.64.0.5"],
+      "Online": true,
+      "ExitNodeOption": true
+    }
+  }
+}

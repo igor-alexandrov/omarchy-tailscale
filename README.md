@@ -109,22 +109,41 @@ instantiated bar panel, so the old UI keeps rendering and newly added
 `IpcHandler` children never register. Run `omarchy restart shell` after editing,
 then reopen the panel.
 
-Validate the manifest before publishing:
+### Checks
 
 ```bash
-omarchy plugin validate .
+bin/check
 ```
 
-`Model.js` can be exercised directly against real status output:
+Runs everything, skipping any step whose tooling is missing rather than failing:
 
-```bash
-tailscale status --json > status.json
-node -e '
-  const M = require("./Model.js");
-  const r = M.parseStatus(require("fs").readFileSync("status.json", "utf8"));
-  console.log(r.selfName, r.selfIp, r.peers.map(p => p.HostName + " " + p.TailscaleIPs[0]));
-'
-```
+| Step | Needs | Covers |
+|------|-------|--------|
+| `node --check Model.js` | node | Syntax |
+| `test/model-test.js` | node | `Model.js` parsing, against synthetic fixtures |
+| `test/manifest-test.js` | node | The rules `omarchy plugin validate` enforces, plus entry points on disk and the IPC target matching the plugin id |
+| `omarchy plugin validate .` | Omarchy | The authoritative manifest check |
+| `qmllint` | Qt 6 | QML errors |
+
+CI runs `bin/check` on every push and pull request. A stock runner has neither
+Omarchy nor Qt 6, so the last two steps are local-only — run `bin/check` on your
+Omarchy machine before releasing.
+
+Two notes on qmllint, which cost some time to work out:
+
+- Use **Qt 6's** binary at `/usr/lib/qt6/bin/qmllint`. On Arch, `/usr/bin/qmllint`
+  is Qt 5's and exits 255 with no output on any Quickshell file.
+- `import qs.Ui` only resolves if the shell tree is visible under a directory
+  literally named `qs`, so `bin/check` builds a symlink farm for it.
+
+Warnings are reported but do not fail the run: the upstream code this is derived
+from carries ~157 of them, nearly all `unqualified` access and `missing-property`
+against the `Style` singleton's nested objects, which qmllint cannot introspect.
+Errors do fail.
+
+The fixtures in `test/fixtures/` are hand-written. Keep them that way — real
+`tailscale status --json` output carries node public keys, account addresses and
+your tailnet name, none of which belong in a public repository.
 
 ## Credits
 

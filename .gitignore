@@ -1,2 +1,3 @@
 *.qslog
 .DS_Store
+.claude/

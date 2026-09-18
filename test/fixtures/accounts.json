@@ -1,0 +1,14 @@
+[
+  {
+    "ID": "aaaa",
+    "Tailnet": "tailnet-demo.ts.net",
+    "Account": "someone@example.com",
+    "Selected": true
+  },
+  {
+    "ID": "bbbb",
+    "Tailnet": "other-demo.ts.net",
+    "Account": "someone-else@example.com",
+    "Selected": false
+  }
+]

@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # bin/check skips the steps that need Omarchy or Qt 6, which a stock
+      # runner does not have, so this covers Model.js and the manifest. Run
+      # bin/check locally on an Omarchy machine for `omarchy plugin validate`
+      # and qmllint as well.
+      - name: Run checks
+        run: ./bin/check
