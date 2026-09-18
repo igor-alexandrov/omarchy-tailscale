@@ -10,6 +10,10 @@ equivalent of the Tailscale menu bar icon on macOS.
 Click the icon to see your account, this device, and every machine on your
 tailnet with its Tailscale IP.
 
+<img src="docs/panel.png" alt="The Tailscale panel open in the Omarchy bar, showing This device, Machines and Account sections" width="384">
+
+*Addresses are blurred in the screenshot.*
+
 ## Features
 
 - Connection state in the bar, with a Tailscale mark drawn natively as a
